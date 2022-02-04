@@ -1,16 +1,26 @@
-package com.zalyatdinov.parking.entities;
+package com.zalyatdinov.parking.model;
 
-public class ParkNumber {
+import javax.persistence.*;
+
+@Entity
+@Table
+public class ParkPlace {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id", nullable = false)
+    private Long id;
+
     private int number;
+
     private String stateNumber;
+
     private String parkStatus;
+
     private String parkPayStatus;
 
-    public ParkNumber(int number, String stateNumber, String parkStatus, String parkPayStatus) {
-        this.number = number;
-        this.stateNumber = stateNumber;
-        this.parkStatus = parkStatus;
-        this.parkPayStatus = parkPayStatus;
+
+    public ParkPlace() {
     }
 
     public int getNumber() {

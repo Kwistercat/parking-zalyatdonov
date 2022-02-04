@@ -1,4 +1,4 @@
-package com.zalyatdinov.parking.entities;
+package com.zalyatdinov.parking.model;
 
 public class User {
     private String name;
