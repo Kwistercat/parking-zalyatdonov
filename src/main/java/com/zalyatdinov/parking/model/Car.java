@@ -1,7 +1,5 @@
 package com.zalyatdinov.parking.model;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 
 @Entity
@@ -13,20 +11,23 @@ public class Car {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column
     private String model;
 
+    @Column
     private String mark;
 
+    @Column
     private String stateNumber;
 
+    @Column
     private String color;
 
+    @Column
     private String photo;
 
 
     @OneToOne
-    @JoinColumn(name = "place_id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private ParkPlace parkPlace;
 
     public Car() {

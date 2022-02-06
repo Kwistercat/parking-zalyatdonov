@@ -11,14 +11,17 @@ public class ParkPlace {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column
     private int number;
 
+    @Column
     private String stateNumber;
 
+    @Column
     private String parkStatus;
 
+    @Column
     private String parkPayStatus;
-
 
     public ParkPlace() {
     }

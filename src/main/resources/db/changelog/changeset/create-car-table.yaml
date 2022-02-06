@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-car
+      author: Tagir
+      changes:
+        - createTable:
+            tableName: car
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: model
+                  type: varchar(200)
+              - column:
+                  name: mark
+                  type: varchar(200)
+              - column:
+                  name: statenumber
+                  type: varchar(200)
+              - column:
+                  name: color
+                  type: varchar(200)
+              - column:
+                  name: photo
+                  type: varchar(200)
