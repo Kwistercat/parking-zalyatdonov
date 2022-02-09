@@ -2,6 +2,10 @@ databaseChangeLog:
   - changeSet:
       id: create-parkplace
       author: Tagir
+      preConditions:
+        - not:
+            - tableExists:
+                tableName: parkplace
       changes:
         - createTable:
             tableName: parkplace
@@ -21,7 +25,8 @@ databaseChangeLog:
                   type: varchar(200)
               - column:
                   name: parkstatus
-                  type: boolean
+                  type: enum('FREE', 'BUSY')
               - column:
-                  name: parkpaystatus
-                  type: boolean
+                  name: paystatus
+                  type: enum('PAID', 'NOT_PAID')
+
