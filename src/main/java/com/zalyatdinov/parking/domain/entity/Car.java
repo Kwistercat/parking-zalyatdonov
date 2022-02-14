@@ -3,9 +3,10 @@ package com.zalyatdinov.parking.domain.entity;
 import com.zalyatdinov.parking.domain.dto.CarDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.persistence.*;
+import java.lang.reflect.InvocationTargetException;
 
 @Entity
 @Table
@@ -31,9 +32,18 @@ public class Car {
     @OneToOne
     private ParkPlace parkPlace;
 
-    public static Car from(CarDto dto) {
-        Car car = new Car();
-        BeanUtils.copyProperties(dto, car);
-        return car;
+
+
+    public Car(CarDto dto) {
+        if (dto.getId() == null) {
+            dto.setId(0L);
+        }
+        try {
+            BeanUtils.copyProperties(this, dto);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }

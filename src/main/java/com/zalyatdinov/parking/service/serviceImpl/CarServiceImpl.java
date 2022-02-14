@@ -2,34 +2,26 @@ package com.zalyatdinov.parking.service.serviceImpl;
 
 
 import com.zalyatdinov.parking.domain.dto.CarDto;
+import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import com.zalyatdinov.parking.domain.entity.Car;
 import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import com.zalyatdinov.parking.domain.entity.ParkStatus;
+import com.zalyatdinov.parking.domain.entity.PayStatus;
 import com.zalyatdinov.parking.exception.NotFoundException;
 import com.zalyatdinov.parking.repositories.CarsRepository;
 import com.zalyatdinov.parking.repositories.ParkRepository;
 import com.zalyatdinov.parking.service.CarService;
-import com.zalyatdinov.parking.utils.ParkPlaceUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
-    private CarsRepository carsRepository;
-    private ParkRepository parkRepository;
-
-    @Autowired
-    public void setParkRepository(ParkRepository parkRepository) {
-        this.parkRepository = parkRepository;
-    }
-
-    @Autowired
-    public void setCarsRepository(CarsRepository carsRepository) {
-        this.carsRepository = carsRepository;
-    }
+    private final CarsRepository carsRepository;
+    private final ParkRepository parkRepository;
 
     @Override
     public List<Car> findAll() {
@@ -44,37 +36,55 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car saveCar(CarDto carDto) {
-        return carsRepository.save(Car.from(carDto));
+        Car car = new Car(carDto);
+        return carsRepository.save(car);
+    }
+
+    @Override
+    public void setParkPlace(Long carId, ParkPlaceDto parkPlaceDto) {
+        Optional<Car> carOptional = carsRepository.findById(carId);
+        ParkPlace parkPlace = new ParkPlace(parkPlaceDto);
+        if (parkRepository.existsById(parkPlace.getId())) {
+            carOptional.ifPresent(car -> {
+                if (parkPlace.getParkStatus().equals(ParkStatus.FREE)) {
+                    car.setParkPlace(parkPlace);
+                    parkRepository.save(parkPlace);
+                } else throw new NotFoundException("место занято");
+            });
+        } else throw new NotFoundException("No such park ");
+
     }
 
     @Override
     public Car updateCar(Long carId, CarDto carDto) {
-        Optional<Car> carOptional = carsRepository.findById(carId);
-        Car car = carOptional.orElseThrow(() -> new NotFoundException("No such car " + carId));
-        car = Car.from(carDto);
-        car.setId(carId);
-        ParkPlace parkPlace = car.getParkPlace();
-        if (parkPlace != null) {
-            if (parkPlace.getParkStatus().equals(ParkStatus.BUSY)) {
-                ParkPlaceUtils.freeParkPlace(parkPlace);
-            } else {
-                ParkPlaceUtils.takeParkPlace(car, parkPlace);
-            }
-            parkRepository.save(parkPlace);
-        }
-        return carsRepository.save(car);
+        if (carsRepository.existsById(carId)) {
+            Car car = new Car(carDto);
+            return carsRepository.save(car);
+        } else throw new NotFoundException("No such car " + carId);
     }
 
     @Override
     public void deleteCar(Long carId) {
         Optional<Car> carOptional = carsRepository.findById(carId);
         carOptional.ifPresent(car -> {
-            Optional<ParkPlace> parkPlaceOptional = Optional.of(car.getParkPlace());
-            parkPlaceOptional.ifPresent(parkPlace -> {
-                ParkPlaceUtils.freeParkPlace(parkPlace);
+            ParkPlace parkPlace = car.getParkPlace();
+            if (parkPlace != null) {
+                freeParkPlace(parkPlace);
                 parkRepository.save(parkPlace);
-            });
+            }
             carsRepository.delete(car);
         });
+    }
+
+    private static void freeParkPlace(ParkPlace parkPlace) {
+        parkPlace.setParkStatus(ParkStatus.FREE);
+        parkPlace.setPayStatus(PayStatus.NOT_PAID);
+        parkPlace.setStateNumber(null);
+    }
+
+    private static void takeParkPlace(Car car, ParkPlace parkPlace) {
+        parkPlace.setParkStatus(ParkStatus.BUSY);
+        parkPlace.setPayStatus(PayStatus.NOT_PAID);
+        parkPlace.setStateNumber(car.getStateNumber());
     }
 }

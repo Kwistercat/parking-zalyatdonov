@@ -21,12 +21,12 @@ databaseChangeLog:
                   name: number
                   type: int
               - column:
-                  name: statenumber
+                  name: state_number
                   type: varchar(200)
               - column:
-                  name: parkstatus
+                  name: park_status
                   type: enum('FREE', 'BUSY')
               - column:
-                  name: paystatus
+                  name: pay_status
                   type: enum('PAID', 'NOT_PAID')
 

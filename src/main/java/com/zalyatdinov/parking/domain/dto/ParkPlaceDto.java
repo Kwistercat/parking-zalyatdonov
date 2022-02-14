@@ -8,11 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParkPlaceDto {
+    private Long id;
     private int number;
-
     private String stateNumber;
-
     private String parkStatus;
-
     private String parkPayStatus;
 }

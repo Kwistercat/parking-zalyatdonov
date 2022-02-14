@@ -11,18 +11,11 @@ import javax.persistence.OneToOne;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarDto {
+    private Long id;
     private String model;
-
     private String mark;
-
     private String stateNumber;
-
     private String color;
-
     private String photo;
-
-    @OneToOne
-    private ParkPlace parkPlace;
-
-
+    private ParkPlaceDto parkPlaceDto;
 }

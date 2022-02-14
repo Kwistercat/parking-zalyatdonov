@@ -1,39 +1,37 @@
 package com.zalyatdinov.parking.controllers;
 
 
+import com.zalyatdinov.parking.domain.dto.CarDto;
 import com.zalyatdinov.parking.domain.entity.Car;
-import com.zalyatdinov.parking.service.serviceImpl.CarServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.zalyatdinov.parking.service.CarService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class CarController {
-    private CarServiceImpl carServiceImpl;
-
-    @Autowired
-    public void setCarServiceImpl(CarServiceImpl carServiceImpl) {
-        this.carServiceImpl = carServiceImpl;
-    }
-
+    private final CarService carService;
 
     @GetMapping("/cars")
-    public String findAll() {
-        List<Car> cars = carServiceImpl.findAll();
-        return "cars";
+    public List<Car> findAll() {
+        return carService.findAll();
     }
 
-    public String createCar(Model model) {
-        return null;
+    @PostMapping("/cars")
+    public Car createCar(@RequestBody CarDto carDto) {
+        return carService.saveCar(carDto);
     }
 
+    @PutMapping("/cars/{car-id}")
+    public Car updateCar(@PathVariable("car-id") Long id, @RequestBody CarDto carDto) {
+        return carService.updateCar(id, carDto);
+    }
 
-    //Создание автомобиля;
-    // • Просмотр списка автомобилей;
-    // • Редактирование автомобиля;
-    // • Назначение парковочного места автомобилю;
-    // • Удаление автомобиля;
+    @DeleteMapping("/cars/{car-id}")
+    public void deleteCar(@PathVariable("car-id") Long id) {
+        carService.deleteCar(id);
+    }
+
 }

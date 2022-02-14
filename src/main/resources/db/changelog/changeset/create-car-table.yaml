@@ -24,7 +24,7 @@ databaseChangeLog:
                   name: mark
                   type: varchar(200)
               - column:
-                  name: statenumber
+                  name: state_number
                   type: varchar(200)
               - column:
                   name: color
@@ -33,7 +33,7 @@ databaseChangeLog:
                   name: photo
                   type: varchar(200)
               - column:
-                  name: place_id
+                  name: park_place_id
                   type: bigint
                   constraints:
                     foreignKeyName: place
