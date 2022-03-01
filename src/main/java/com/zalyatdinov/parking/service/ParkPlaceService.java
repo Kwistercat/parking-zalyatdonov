@@ -4,7 +4,6 @@ import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import com.zalyatdinov.parking.domain.entity.ParkStatus;
 import com.zalyatdinov.parking.domain.entity.PayStatus;
-import org.springframework.stereotype.Service;
 
 
 public interface ParkPlaceService {

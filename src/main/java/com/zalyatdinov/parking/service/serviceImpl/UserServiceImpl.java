@@ -1,19 +1,17 @@
 package com.zalyatdinov.parking.service.serviceImpl;
 
 import com.zalyatdinov.parking.domain.dto.UserDto;
-import com.zalyatdinov.parking.domain.entity.Car;
 import com.zalyatdinov.parking.domain.entity.Role;
 import com.zalyatdinov.parking.domain.entity.User;
+import com.zalyatdinov.parking.exception.NotFoundException;
 import com.zalyatdinov.parking.repositories.UserRepository;
 import com.zalyatdinov.parking.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,18 +28,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Long id) {
+        if (!existsById(id)) {
+            throw new NotFoundException("Fail -> Not found user!");
+        }
         User user = userRepository.findById(id).get();
         return new UserDto(user);
     }
 
     @Override
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId).get();
-        userRepository.delete(user);
+        if (!existsById(userId)) {
+            throw new NotFoundException("Fail -> Not found user!");
+        } else {
+            User user = userRepository.findById(userId).get();
+            userRepository.delete(user);
+        }
     }
 
     @Override
     public User createUser(UserDto userDto) {
+        if (existsByUsername(userDto.getUsername())) {
+            throw new NotFoundException("Fail -> Username is already taken!");
+        }
+        if (existsById(userDto.getId())) {
+            throw new NotFoundException("Fail -> Id is already in use!");
+        }
         User user = new User(userDto);
         user.setId(0L);
         user.setRoles(Collections.singleton(Role.USER));
@@ -52,6 +63,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(UserDto userDto, Long userId) {
         User user = new User(userDto);
+        if (!existsById(userId) || !userDto.getId().equals(userId)) {
+            throw new NotFoundException("Fail -> Not found user!");
+        }
         if (userDto.getPassword() != null) user.setPassword(encoder.encode(userDto.getPassword()));
         return userRepository.save(user);
     }
@@ -66,17 +80,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsById(id);
     }
 
-
-    // не уверен, подумать еще
     @Override
     public void setRole(Long userId, Role role) {
+        if (!existsById(userId)) {
+            throw new NotFoundException("Fail -> Not found user!");
+        }
         User user = userRepository.findById(userId).get();
         user.setRoles(Collections.singleton(role));
-    }
-
-    @Override
-    public String refresh(Authentication authentication) {
-        // TODO: генерация jwt токена?
-        return null;
     }
 }

@@ -1,6 +1,5 @@
 package com.zalyatdinov.parking.service;
 
-import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import com.zalyatdinov.parking.domain.dto.UserDto;
 import com.zalyatdinov.parking.domain.entity.Role;
 import com.zalyatdinov.parking.domain.entity.User;
@@ -25,5 +24,4 @@ public interface UserService {
 
     void setRole(Long userId, Role role);
 
-    String refresh(Authentication authentication);
 }
