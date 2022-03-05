@@ -80,10 +80,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setRole(Long userId, Role role) {
-        if (!existsById(userId)) {
-            throw new NotFoundException("Fail -> Not found user!");
-        }
-        User user = userRepository.findById(userId).get();
-        user.setRoles(Collections.singleton(role));
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            userOptional.get().setRoles(Collections.singleton(role));
+        } else throw new NotFoundException("Fail -> Not found user!");
     }
 }
