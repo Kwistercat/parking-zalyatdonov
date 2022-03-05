@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,21 +29,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Long id) {
-        if (!existsById(id)) {
-            throw new NotFoundException("Fail -> Not found user!");
-        }
-        User user = userRepository.findById(id).get();
-        return new UserDto(user);
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return new UserDto(userOptional.get());
+        } else throw new NotFoundException("Fail -> Not found user!");
     }
 
     @Override
     public void deleteUser(Long userId) {
-        if (!existsById(userId)) {
-            throw new NotFoundException("Fail -> Not found user!");
-        } else {
-            User user = userRepository.findById(userId).get();
-            userRepository.delete(user);
-        }
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            userRepository.delete(userOptional.get());
+        } else throw new NotFoundException("Fail -> Not found user!");
     }
 
     @Override

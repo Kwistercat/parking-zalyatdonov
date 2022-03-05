@@ -1,4 +1,4 @@
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id       int AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50)  NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE users
     enabled  boolean      NOT NULL
 );
 
-CREATE TABLE user_role
+CREATE TABLE IF NOT EXISTS user_role
 (
     id   int AUTO_INCREMENT PRIMARY KEY,
     ROLES varchar(50) not null,
