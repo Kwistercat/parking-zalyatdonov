@@ -1,6 +1,7 @@
 package com.zalyatdinov.parking.service.serviceImpl;
 
 import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
+import com.zalyatdinov.parking.domain.entity.Car;
 import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import com.zalyatdinov.parking.domain.entity.ParkStatus;
 import com.zalyatdinov.parking.domain.entity.PayStatus;
@@ -10,6 +11,7 @@ import com.zalyatdinov.parking.service.ParkPlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,11 @@ public class ParkPlaceServiceImpl implements ParkPlaceService {
     public ParkPlace saveParkPlace(ParkPlaceDto parkPlaceDto) {
         ParkPlace parkPlace = new ParkPlace(parkPlaceDto);
         return parkRepository.save(parkPlace);
+    }
+
+    @Override
+    public List<ParkPlace> findAll() {
+        return parkRepository.findAll();
     }
 
     @Override

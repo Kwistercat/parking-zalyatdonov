@@ -6,8 +6,11 @@ import com.zalyatdinov.parking.domain.entity.ParkStatus;
 import com.zalyatdinov.parking.domain.entity.PayStatus;
 import com.zalyatdinov.parking.service.ParkPlaceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,5 +40,12 @@ public class ParkPlaceController {
     public ParkPlace createParkPlace(@RequestBody ParkPlaceDto parkPlaceDto) {
         return parkPlaceService.saveParkPlace(parkPlaceDto);
     }
+
+    @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MANAGER')")
+    @GetMapping("/places")
+    public List<ParkPlace> findAll() {
+        return parkPlaceService.findAll();
+    }
+
 
 }

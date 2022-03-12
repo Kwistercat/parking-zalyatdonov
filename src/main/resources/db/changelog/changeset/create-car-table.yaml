@@ -36,5 +36,5 @@ databaseChangeLog:
                   name: park_place_id
                   type: bigint
                   constraints:
-                    foreignKeyName: place
+                    foreignKeyName: id
                     referencedTableName: parkplace

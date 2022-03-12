@@ -37,6 +37,9 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car saveCar(CarDto carDto) {
         Car car = new Car(carDto);
+        if (carDto.getParkPlaceDto() != null) {
+            car.setParkPlace(new ParkPlace(carDto.getParkPlaceDto()));
+        }
         return carsRepository.save(car);
     }
 
