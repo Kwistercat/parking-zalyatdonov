@@ -22,6 +22,7 @@ public class ParkPlaceServiceImpl implements ParkPlaceService {
     @Override
     public ParkPlace saveParkPlace(ParkPlaceDto parkPlaceDto) {
         ParkPlace parkPlace = new ParkPlace(parkPlaceDto);
+        parkRepository.countAllByParkStatus(ParkStatus.FREE);
         return parkRepository.save(parkPlace);
     }
 

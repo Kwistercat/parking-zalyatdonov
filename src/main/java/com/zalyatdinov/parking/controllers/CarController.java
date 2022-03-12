@@ -48,8 +48,6 @@ public class CarController {
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MANAGER')")
     @PostMapping("/cars/{car-id}")
     public void setParkPlace(@PathVariable("car-id") Long id, @RequestBody ParkPlaceDto parkPlaceDto) {
-        jmsTemplate.convertAndSend("my_topic", parkPlaceDto.getNumber());
-        System.out.println("Message sent to Topic");
         carService.setParkPlace(id, parkPlaceDto);
     }
 

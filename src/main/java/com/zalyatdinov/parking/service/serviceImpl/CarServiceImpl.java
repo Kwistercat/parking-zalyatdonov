@@ -12,6 +12,7 @@ import com.zalyatdinov.parking.repositories.CarsRepository;
 import com.zalyatdinov.parking.repositories.ParkRepository;
 import com.zalyatdinov.parking.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class CarServiceImpl implements CarService {
     private final CarsRepository carsRepository;
     private final ParkRepository parkRepository;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public List<Car> findAll() {
@@ -40,6 +42,8 @@ public class CarServiceImpl implements CarService {
         if (carDto.getParkPlaceDto() != null) {
             car.setParkPlace(new ParkPlace(carDto.getParkPlaceDto()));
         }
+        jmsTemplate.convertAndSend("my_topic", parkRepository.countAllByParkStatus(ParkStatus.FREE));
+        System.out.println("Message sent to Topic");
         return carsRepository.save(car);
     }
 
@@ -55,7 +59,6 @@ public class CarServiceImpl implements CarService {
                 } else throw new NotFoundException("место занято");
             });
         } else throw new NotFoundException("No such park ");
-
     }
 
     @Override
