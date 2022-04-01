@@ -20,4 +20,5 @@ public interface ParkPlaceService {
 
     List<ParkPlace> findAll();
 
+    void checkParks();
 }

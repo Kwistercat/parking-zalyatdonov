@@ -6,7 +6,6 @@ import com.zalyatdinov.parking.domain.entity.ParkStatus;
 import com.zalyatdinov.parking.domain.entity.PayStatus;
 import com.zalyatdinov.parking.service.ParkPlaceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +17,15 @@ public class ParkPlaceController {
     private final ParkPlaceService parkPlaceService;
 
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MANAGER')")
-    @PostMapping("/places/{park-id}/parkStatus")
+    @PutMapping("/places/{park-id}/parkStatus")
     public ParkPlace updateParkStatus(@PathVariable("park-id") Long parkId, @RequestBody ParkStatus status) {
         return parkPlaceService.updateParkStatus(status, parkId);
     }
 
     @PreAuthorize("hasAuthority('ADMIN') || hasAuthority('MANAGER')")
-    @PostMapping("/places/{park-id}/payStatus")
+    @PutMapping("/places/{park-id}/payStatus")
     public ParkPlace updatePayStatus(@PathVariable("park-id") Long parkId, @RequestBody PayStatus payStatus) {
+        parkPlaceService.checkParks();
         return parkPlaceService.updatePayStatus(payStatus, parkId);
     }
 
@@ -46,6 +46,5 @@ public class ParkPlaceController {
     public List<ParkPlace> findAll() {
         return parkPlaceService.findAll();
     }
-
 
 }

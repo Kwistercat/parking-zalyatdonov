@@ -1,5 +1,8 @@
 package com.zalyatdinov.parking.service.serviceImpl;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import com.zalyatdinov.parking.actors.ParkActor;
 import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import com.zalyatdinov.parking.domain.entity.ParkStatus;
@@ -11,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +37,16 @@ public class ParkPlaceServiceImpl implements ParkPlaceService {
     @Override
     public List<ParkPlace> findAll() {
         return parkRepository.findAll();
+    }
+
+    @Override
+    @Scheduled(fixedDelayString = "PT01H")
+    public void checkParks() {
+        ActorSystem akkaSystem = ActorSystem.create("mySystem");
+        ActorRef parkActor = akkaSystem.actorOf(ParkActor.props(), "parkActor");
+        for (ParkPlace parkPlace : parkRepository.findAll()) {
+            parkActor.tell(parkPlace, ActorRef.noSender());
+        }
     }
 
     @CacheEvict(allEntries = true)
