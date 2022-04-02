@@ -1,7 +1,5 @@
 package com.zalyatdinov.parking.domain.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.EnumDeserializer;
 import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,11 +24,6 @@ public class ParkPlace {
 
     @Enumerated(value = EnumType.STRING)
     private ParkStatus parkStatus;
-
-    @JsonDeserialize(using = EnumDeserializer.class)
-    public void setParkStatus(ParkStatus parkStatus) {
-        this.parkStatus = parkStatus;
-    }
 
     @Enumerated(value = EnumType.STRING)
     private PayStatus payStatus;

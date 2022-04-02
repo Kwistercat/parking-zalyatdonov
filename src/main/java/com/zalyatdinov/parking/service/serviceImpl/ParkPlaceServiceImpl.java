@@ -2,7 +2,7 @@ package com.zalyatdinov.parking.service.serviceImpl;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import com.zalyatdinov.parking.actors.ParkActor;
+import com.zalyatdinov.parking.actors.ParkingActor;
 import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
 import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import com.zalyatdinov.parking.domain.entity.ParkStatus;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
 @CacheConfig(cacheNames = {"allParks"})
 public class ParkPlaceServiceImpl implements ParkPlaceService {
     private final ParkRepository parkRepository;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public ParkPlace saveParkPlace(ParkPlaceDto parkPlaceDto) {
@@ -43,9 +45,9 @@ public class ParkPlaceServiceImpl implements ParkPlaceService {
     @Scheduled(fixedDelayString = "PT01H")
     public void checkParks() {
         ActorSystem akkaSystem = ActorSystem.create("mySystem");
-        ActorRef parkActor = akkaSystem.actorOf(ParkActor.props(), "parkActor");
+        ActorRef parkingActor = akkaSystem.actorOf(ParkingActor.props(jmsTemplate), "parkingActor");
         for (ParkPlace parkPlace : parkRepository.findAll()) {
-            parkActor.tell(parkPlace, ActorRef.noSender());
+            parkingActor.tell(parkPlace, ActorRef.noSender());
         }
     }
 

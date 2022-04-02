@@ -1,7 +1,7 @@
 package com.zalyatdinov.parking.mq;
 
 import com.zalyatdinov.parking.domain.dto.CarDto;
-import com.zalyatdinov.parking.domain.dto.ParkPlaceDto;
+import com.zalyatdinov.parking.domain.entity.ParkPlace;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +17,8 @@ public class ActiveMQConsumer {
         System.out.println("Received from topic: " + message);
     }
 
-    @JmsListener(destination = "dispatcher")
-    public void receiveQueue(ParkPlaceDto park) {
+    @JmsListener(destination = "dispatcher", containerFactory = "jsaFactory")
+    public void receiveTopic_2(ParkPlace park) {
         System.out.println("Received from topic: " + park);
     }
 
